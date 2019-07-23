@@ -1,6 +1,4 @@
 #!/bin/sh
-cd ${0%/*} || exit 1                        # Run from this directory
-. $WM_PROJECT_DIR/bin/tools/RunFunctions    # Tutorial run functions
 
 if [ ! -d cases ]; then
     mkdir cases
@@ -14,13 +12,16 @@ while [ -d cases/$newName ]; do
 done
 cp -r org cases/$newName
 cd cases/$newName
+
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
 ./Allrun
+touch ${newName}.foam
 
 echo ""
 echo "less log ? [y/N]"
 read ans
 if [ "$ans" = "y" ]; then
-  solverName = $(getApplication)
+  solverName=$(getApplication)
   less log.$solverName
 fi
 

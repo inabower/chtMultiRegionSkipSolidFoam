@@ -109,9 +109,23 @@ int main(int argc, char *argv[])
             {
                 Info<< "\nSolving for solid region "
                     << solidRegions[i].name() << endl;
-                #include "setRegionSolidFields.H"
-                #include "readSolidMultiRegionPIMPLEControls.H"
-                #include "solveSolid.H"
+				integratedTime[i] += runTime.deltaT().value();
+				if(skipInterval[i] < integratedTime[i] || runTime.outputTime())
+				{
+					const scalar deltaTOrg = runTime.deltaT().value();
+					runTime.deltaT().value() = integratedTime[i];
+					
+					#include "setRegionSolidFields.H"
+					#include "readSolidMultiRegionPIMPLEControls.H"
+					#include "solveSolid.H"
+					
+					runTime.deltaT().value() = deltaTOrg;
+					integratedTime[i] = 0.0;
+				}
+				else
+				{
+					Info << "Skipped calculation" << endl;
+				}
             }
 
             // Additional loops for energy solution only

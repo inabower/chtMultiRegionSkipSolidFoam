@@ -5,6 +5,10 @@
     PtrList<fv::options> solidHeatSources(solidRegions.size());
     PtrList<volScalarField> betavSolid(solidRegions.size());
     PtrList<volSymmTensorField> aniAlphas(solidRegions.size());
+    
+    // add
+    scalarList skipInterval(solidRegions.size(), -1.0);
+    scalarList integratedTime(solidRegions.size(), 0.0);
 
     // Populate solid field pointer lists
     forAll(solidRegions, i)
@@ -99,4 +103,11 @@
                 )
             );
         }
+        
+        // add
+        const dictionary& solutionDict = solidRegions[i].solutionDict();
+        if(solutionDict.found("skipInterval"))
+        {
+			skipInterval[i] = solutionDict.lookupOrDefault<scalar>("skipInterval", -1.0);
+		}
     }
